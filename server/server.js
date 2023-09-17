@@ -15,7 +15,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send("Something went wrong");
 });
 
-db.query("SELECT 1;")
+ db.query("SELECT 1;")
   .then(() => {
     console.log("Connected to the database");
     app.listen(process.env.PORT, () =>
