@@ -1,11 +1,10 @@
 module.exports = `
 CREATE TABLE IF NOT EXISTS department (
-    stud_id INT AUTO_INCREMENT ,
-    stud_name VARCHAR(255) NOT NULL,
-    stud_last_name VARCHAR(255) NOT NULL,
-    stud_department VARCHAR(255) NOT NULL,
-    stud_cource VARCHAR(255) NOT NULL,
-    stud_section VARCHAR(255) NOT NULL,
-    PRIMARY KEY (stud_id)
-);
+    department_id INT AUTO_INCREMENT,
+    department_name VARCHAR(255) NOT NULL,
+    cource_id INT,
+    timestamp_column TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (department_id),
+    FOREIGN KEY (cource_id) REFERENCES cource(cource_id)
+)
 `;

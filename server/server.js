@@ -1,13 +1,15 @@
 const express = require("express");
 const db = require("./db");
 const dotenv = require("dotenv");
+const cors = require('cors')
 const studRout = require("./router/studRouter");
 require("express-async-errors");
 
 dotenv.config();
+
 const app = express();
 app.use(express.json());
-
+app.use(cors())
 app.use("/student", studRout); // Define routes before the error handler
 
 app.use((err, req, res, next) => {

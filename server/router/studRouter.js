@@ -4,14 +4,19 @@ const {
   handle_get_all,
   handle_get_one,
   handle_delete_one,
-  handle_post_record,
   handle_put_one,
+  handle_post_user,
+  handle_post_department,
+  handle_post_course
 } = require("../controller/studController");
 
 studRout.get("/allstud", handle_get_all);
 studRout.get("/allstud/:id", handle_get_one);
 studRout.delete("/allstud/delete/:id", handle_delete_one);
-studRout.post("/addStud", handle_post_record);
 studRout.put("/update/:id", handle_put_one);
+studRout.post("/adduser", handle_post_user);
+studRout.post("/adddepartment", handle_post_department);
+studRout.post("/addcourse", handle_post_course);
+
 
 module.exports = studRout;
