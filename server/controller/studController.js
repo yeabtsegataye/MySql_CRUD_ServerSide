@@ -1,16 +1,36 @@
 const db = require("../db");
+const all_user = require('../query/get_all_user')
 /////////////////
 const handle_get_all = async (req, res) => {
-  try {
-    const [allData] = await db.query("select * from department");
-    if (allData) {
-      res.status(200).send(allData);
+  try {  
+    const [allUserData] = await db.query(all_user);
+
+    // Transform the data to group by users
+    const usersData = {};
+    for (const userData of allUserData) {
+      const { user_name, department_name, cource_name } = userData;
+      if (!usersData[user_name]) {
+        usersData[user_name] = {
+          user_name,
+          department_name,
+          courses: [],
+        };
+      }
+      usersData[user_name].courses.push(cource_name);
+    }
+
+    // Convert the object values (user data) to an array
+    const responseData = Object.values(usersData);
+
+    if (responseData) {
+      res.status(200).json(responseData);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(400).send(error.message);
   }
 };
+
 ////////////////////
 const handle_get_one = async (req, res) => {
   const id = req.params.id;
@@ -72,19 +92,18 @@ const handle_post_user = async (req, res) => {
 ////////////
 const handle_post_department = async (req, res) => {
   const {
-    department_name,
-    cource_id
+    department_name
   } = req.body;
   if (
-    !department_name || !cource_id
+    !department_name
   ) {
     return res.status(400).send("fill all the imputs");
   }
   try {
     // Modify the INSERT statement to specify columns (excluding stud_id)
     const [departmentData] = await db.query(
-      "INSERT INTO department (department_name, cource_id) VALUES (?, ?)",
-      [department_name ,cource_id]
+      "INSERT INTO department (department_name) VALUES (?)",
+      [department_name]
     );
 
     if (departmentData) {
@@ -96,6 +115,32 @@ const handle_post_department = async (req, res) => {
   }
 };
 ////////////
+const handle_post_assigncource= async (req, res) => {
+  const {
+    cource_id,
+    department_id
+  } = req.body;
+  if (
+    !department_id || !cource_id
+  ) {
+    return res.status(400).send("fill all the imputs");
+  }
+  try {
+    // Modify the INSERT statement to specify columns (excluding stud_id)
+    const [departmentData] = await db.query(
+      "INSERT INTO department_course (department_id,cource_id) VALUES (?, ?)",
+      [department_id, cource_id]
+    );
+
+    if (departmentData) {
+      res.status(200).send(departmentData);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.message);
+  }
+};
+//////////
 const handle_post_course = async (req, res) => {
   const {
     cource_name
@@ -192,5 +237,6 @@ module.exports = {
   handle_put_one,
   handle_post_user,
   handle_post_department,
-  handle_post_course
+  handle_post_course,
+  handle_post_assigncource
 };
