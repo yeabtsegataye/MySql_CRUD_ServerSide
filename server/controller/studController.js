@@ -1,5 +1,6 @@
 const db = require("../db");
 const all_user = require('../query/get_all_user')
+const one_user = require('../query/get_one_user')
 /////////////////
 const handle_get_all = async (req, res) => {
   try {  
@@ -9,7 +10,7 @@ const handle_get_all = async (req, res) => {
     const usersData = {};
     for (const userData of allUserData) {
       const { user_name, department_name, cource_name } = userData;
-      if (!usersData[user_name]) {
+            if (!usersData[user_name]) {
         usersData[user_name] = {
           user_name,
           department_name,
@@ -17,11 +18,11 @@ const handle_get_all = async (req, res) => {
         };
       }
       usersData[user_name].courses.push(cource_name);
+      
     }
-
     // Convert the object values (user data) to an array
     const responseData = Object.values(usersData);
-
+    // console.log(usersData)
     if (responseData) {
       res.status(200).json(responseData);
     }
@@ -30,17 +31,32 @@ const handle_get_all = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
-
 ////////////////////
 const handle_get_one = async (req, res) => {
   const id = req.params.id;
   try {
     const [allData] = await db.query(
-      "select * from department where stud_id = ?",
+      one_user,
       [id]
     );
-    if (allData) {
-      res.status(200).send(allData);
+    const usersData = {};
+    for (const userData of allData) {
+      const { user_name, department_name, cource_name } = userData;
+            if (!usersData[user_name]) {
+        usersData[user_name] = {
+          user_name,
+          department_name,
+          courses: [],
+        };
+      }
+      usersData[user_name].courses.push(cource_name);
+      
+    }
+    // Convert the object values (user data) to an array
+    const responseData = Object.values(usersData);
+    // console.log(usersData)
+    if (responseData) {
+      res.status(200).json(responseData);
     }
   } catch (error) {
     console.log(error);
